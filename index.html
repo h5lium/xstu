@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WYU XStu</title>
+
+<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme.min.css">
+</head>
+<body>
+<style scoped>
+	#frame {
+		margin-top: 50px;
+	}
+</style>
+
+<nav id="nav" class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+			    <span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			    <span class="icon-bar"></span>
+		    </button>
+			<a href="login" class="navbar-brand">XStu</a>
+		</div>
+		
+		<div class="collapse navbar-collapse navbar-ex1-collapse">
+			<ul class="nav navbar-nav">
+				<li>
+					<a href="profile">学生学籍</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<div id="frame" class="container"></div>
+
+<script src="lib/underscore-min.js"></script>
+<script src="lib/jquery.min.js"></script>
+<script src="lib/form.js"></script>
+<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+<script>
+var $frame = $('#frame');
+(function() {
+	$frame.load('login.html');
+	$('#nav').delegate('a[href]', 'click', function() {
+		$frame.load($(this).attr('href') + '.html');
+		return false;
+	});
+	
+	var Client = require('./lib/Client.class');
+	var client = global.client = new Client('jwc.wyu.cn', 'gbk');
+	
+	global.profile = null;
+})();
+</script>
+</body>
+</html>

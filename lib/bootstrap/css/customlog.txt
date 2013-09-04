@@ -1,0 +1,5 @@
+bootstrap.css
+
+narbar
+@media (min-width:768px) -> @media (min-width:799px)
+@media (max-width:767px) -> @media (max-width:800px)

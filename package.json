@@ -1,0 +1,13 @@
+{
+	"name": "wyuxstu",
+	"main": "index.html",
+	"version": "0.0.1",
+	"window": {
+		"toolbar": false,
+		"position": "center",
+		"width": 800,
+		"height": 600,
+		"min_width": 420,
+		"min_height": 300
+	}
+}
