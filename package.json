@@ -5,10 +5,10 @@
 	"window": {
 		"toolbar": false,
 		"position": "center",
-		"width": 800,
-		"height": 600,
-		"min_width": 420,
-		"min_height": 300
+		"width": 1000,
+		"height": 700,
+		"min_width": 1000,
+		"min_height": 700
 	},
 	"dependencies": {
 		"underscore": "1.5.1",

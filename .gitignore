@@ -1,9 +1,4 @@
 /.project
 /.idea
 /*.zip
-/*.txt
-/npm-debug.log
-/config
-/public/uploads
 /node_modules
-/test

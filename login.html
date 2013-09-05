@@ -1,20 +1,33 @@
 
 
-<h2>学生登录</h2>
+<style scoped>
+
+</style>
+
 
 <div class="row">
-	<div class="col-xs-6">
+	<div class="col-sm-4 col-sm-offset-2">
 		
-		<form id="login">
+		<form id="login" class="form-horizontal">
+			<legend>学生登录</legend>
+			
 			<div class="form-group">
-				<label>学号</label>
-				<input type="text" name="UserCode" class="form-control">
+				<label class="control-label col-sm-3">学号</label>
+				<div class="col-sm-9">
+					<input type="text" name="UserCode" class="form-control" autofocus>
+				</div>
 			</div>
 			<div class="form-group">
-				<label>密码</label>
-				<input type="password" name="UserPwd" class="form-control">
+				<label class="control-label col-sm-3">密码</label>
+				<div class="col-sm-9">
+					<input type="password" name="UserPwd" class="form-control">
+				</div>
 			</div>
-			<button type="submit" class="btn btn-primary btn-lg">登录</button>		
+			<div class="form-group">
+				<div class="col-sm-12">
+					<button type="submit" class="btn btn-primary btn-lg" data-x-loading="登录中...">登录</button>
+				</div>
+			</div>	
 		</form>
 		
 	</div>
@@ -24,10 +37,15 @@
 <script>
 (function() {
 	var client = global.client;
+	var $login = $('#login'),
+		$btn = $login.find('[type="submit"]');
 	
-    $('#login').on('submit', function(ev) {
+    $login.on('submit', function(ev) {
 		global.profile = null;
+		global.courses = null;
+		
     	var $form = $(this);
+		$btn.xToggleLoading(true);
     	ev.preventDefault();
     	// 进入登录页面
 		client.get('/student/', {}, {}, function(err, res, body) {
@@ -37,13 +55,90 @@
 		    {}, function(err, res, body){
 		        var success = /welcome/.test(body);
 		        if (success) {
-		        	$frame.load('profile.html');
+					// 加载资料
+					var toLoad = [{
+						url: '/student/f1.asp',
+						callback: function(body) {
+							global.profile = parseProfile(body);
+						}
+					}, {
+						url: '/student/f3.asp',
+						callback: function(body) {
+							global.courses = parseCourses(body);
+						}
+					}], numLoaded = 0;
+					_.each(toLoad, function(val) {
+						client.get(val.url, {}, {}, function(err, res, body) {
+							try {
+								val.callback(body);
+								numLoaded ++;
+								if (numLoaded === toLoad.length) {
+									$frame.xLoad('profile');
+								}
+							} catch (err) {
+								alert('资料加载失败');
+								$btn.xToggleLoading(false);
+								$frame.xLoad('login');
+							}
+						});
+					});
 		        } else {
 		        	alert('登录信息错误');
+					$btn.xToggleLoading(false);
 		        }
 		    });
 		});
     	return false;
     });
+	
+	function parseProfile(html) {
+	    html = html.replace(/\r\n/g, '');
+		var match = html.match(/<table.+<\/table>/),
+			tableHtml = match && match[0];
+		if (! tableHtml) {
+			throw new Error();
+		}
+	    var $table = $(tableHtml),
+	        $trs = $table.find('tr');
+	    return {
+	        code: $trs.eq(0).find('td').eq(1).text(),
+	        name: $trs.eq(0).find('td').eq(3).text(),
+	        avatar: $trs.eq(0).find('td').eq(6).find('img').attr('src'),
+	        politics: $trs.eq(2).find('td').eq(3).text(),
+	        sex: $trs.eq(1).find('td').eq(1).text(),
+	        birth: $trs.eq(1).find('td').eq(3).text(),
+	        nation: $trs.eq(1).find('td').eq(5).text(),
+	        major: $trs.eq(3).find('td').eq(1).text(),
+	        class: $trs.eq(3).find('td').eq(3).text(),
+	        college: $trs.eq(4).find('td').eq(1).text(),
+	        entrance: $trs.eq(5).find('td').eq(3).text(),
+	        dormitory: $trs.eq(8).find('td').eq(5).text()
+	    }
+	}
+	function parseCourses(html) {
+		html = html.replace(/\r\n/g, '')
+			.replace(/&nbsp;/g, ' ');
+		var match = html.match(/<TABLE cellSpacing=0 borderColorDark=#eeeeee cellPadding=2 width="99%".+<\/TABLE>/),
+			tableHtml = match && match[0];
+		if (! tableHtml) {
+			throw new Error();
+		}
+		var $table = $(tableHtml),
+			$trs = $table.find('tr');
+
+		var courses = [];
+		var periods = 5,
+			days = $trs.eq(0).find('td').length - 1;
+		for (var i=0, j, $tds; i<periods; i++) {
+			courses[i] = [];
+			$tds = $trs.eq(i + 1).find('td');
+			for (j=0; j<days; j++) {
+				courses[i][j] = $tds.eq(j + 1).html()
+					.replace(/<br>/g, '\n')
+					.replace(/&nbsp;/g, ' ');
+			}
+		}
+		return courses;
+	}
 })();
 </script>
