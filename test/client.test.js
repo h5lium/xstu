@@ -1,16 +1,18 @@
-
-var Client = require('../../js/Client.class');
+﻿
+var Client = require('../lib/Client.class');
 var domino = require('domino'),
     Zepto = require('zepto-node'),
     $ = Zepto(domino.createWindow());
 
 
 var client = new Client('jwc.wyu.cn', 'gbk');
+
 var loginForm = {
-    'UserCode': '11080731',
-    'UserPwd': 'lliang',
+    'UserCode': process.argv[2],
+    'UserPwd': process.argv[3],
     'Validate': ''
 }
+
 
 // 进入登录页面
 client.get('/student/', {}, {}, function(err, res, body){
