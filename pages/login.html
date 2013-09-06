@@ -1,37 +1,48 @@
 ﻿
 
 <style scoped>
-
+.form-signin {
+	max-width: 330px;
+	padding: 20px;
+	margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+	margin-bottom: 10px;
+}
+.form-signin .checkbox {
+	font-weight: normal;
+}
+.form-signin .form-control {
+	position: relative;
+	font-size: 16px;
+	height: auto;
+	padding: 10px;
+	-webkit-box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
 </style>
 
 
-<div class="row">
-	<div class="col-sm-4 col-sm-offset-2">
-		
-		<form id="login" class="form-horizontal">
-			<legend>学生登录</legend>
-			
-			<div class="form-group">
-				<label class="control-label col-sm-3">学号</label>
-				<div class="col-sm-9">
-					<input type="text" name="UserCode" class="form-control" autofocus>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-3">密码</label>
-				<div class="col-sm-9">
-					<input type="password" name="UserPwd" class="form-control">
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-12">
-					<button type="submit" class="btn btn-primary btn-lg" data-x-loading="登录中...">登录</button>
-				</div>
-			</div>	
-		</form>
-		
-	</div>
-</div>
+<form id="login" class="form-signin">
+	<h2 class="form-signin-heading">学生登录</h2>
+	<input type="text" name="UserCode" placeholder="学号" class="form-control" autofocus>
+	<input type="password" name="UserPwd" placeholder="密码" class="form-control">
+	
+	<button type="submit" class="btn btn-lg btn-primary btn-block" data-x-loading="登录中...">登录</button>
+</form>
 
 
 <script>

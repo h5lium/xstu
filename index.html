@@ -9,69 +9,93 @@
 </head>
 <body>
 <style scoped>
-	.container {
-		width: 100%;
-		min-width: 0;
-		max-width: 1140px;
-	}
-	.navbar-inverse .navbar-right {
-		color: white;
-	}
-	.navbar-form {
-		padding-right: 0;
-	}
-	table thead th {
-		padding-bottom: 5px;
-	}
-	
-	#frame {
-		margin-top: 70px;
-	}
-	#user .glyphicon-user {
-		padding-bottom: 1px;
-	}
-	#user [data-key="name"] {
-		font-size: 1.2em;
-		margin: 0 24px 0 6px;
-	}
+body {
+	background-color: #fafafa;
+	-webkit-user-select: none;
+}
+.container {
+	width: 100%;
+	min-width: 0;
+	max-width: 1140px;
+}
+.navbar-inverse .navbar-right {
+	color: white;
+}
+.navbar-form {
+	padding-right: 0;
+	margin-right: -15px;
+}
+table thead th {
+	padding-bottom: 5px;
+}
+.table-striped > tbody > tr:nth-child(odd) > td,
+.rows-striped > .row:nth-child(odd) {
+	background-color: #f7f7f7;
+}
+label {
+	cursor: pointer;
+}
+
+#nav-wrapper {
+	height: 50px;
+}
+#nav {
+	background: url(img/octicons-bg.png) center repeat;
+	background-color: #222;
+}
+#nav li.active > a {
+	background-color: rgba(30, 130, 200, 0.3);
+}
+#frame {
+	margin-top: 20px;
+}
+#user .glyphicon-user {
+	padding-bottom: 1px;
+}
+#user [data-key="name"] {
+	font-size: 1.2em;
+	margin: 0 24px 0 6px;
+}
 </style>
 
-<nav id="nav" class="navbar navbar-inverse navbar-fixed-top">
-	<div class="container">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-			    <span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			    <span class="icon-bar"></span>
-		    </button>
-			<a href="login" class="navbar-brand">XStu</a>
-		</div>
-		
-		<div class="collapse navbar-collapse navbar-ex1-collapse">
-			<ul class="nav navbar-nav">
-				<li>
-					<a href="profile">学生学籍</a>
-				</li>
-				<li>
-					<a href="courses">课程表</a>
-				</li>
-				<li>
-					<a href="scores">学分成绩</a>
-				</li>
-			</ul>
+<div id="nav-wrapper">
+	<nav id="nav" class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="login" class="navbar-brand">XStu</a>
+			</div>
 			
-			<form id="user" class="navbar-form navbar-right hidden">
-				<div class="form-group">
-					<p class="form-control-static">
-						<span class="glyphicon glyphicon-user"></span>
-						<span data-key="name">admin</span>
-					</p>
-				</div>
-				<button type="submit" class="btn btn-danger">退出</button>
-			</form>
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="profile">学生学籍</a>
+					</li>
+					<li>
+						<a href="courses">课程表</a>
+					</li>
+					<li>
+						<a href="scores">学分成绩</a>
+					</li>
+				</ul>
+				
+				<form id="user" class="navbar-form navbar-right hidden">
+					<div class="form-group">
+						<p class="form-control-static">
+							<span class="glyphicon glyphicon-user"></span>
+							<span data-key="name">admin</span>
+						</p>
+					</div>
+					<button type="submit" class="btn btn-danger">退出</button>
+				</form>
+			</div>
 		</div>
-	</div>
-</nav>
+	</nav>
+</div>
 
 <div id="frame" class="container"></div>
 
