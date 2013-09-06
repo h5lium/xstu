@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -14,13 +14,25 @@
 		min-width: 0;
 		max-width: 1140px;
 	}
+	.navbar-inverse .navbar-right {
+		color: white;
+	}
+	.navbar-form {
+		padding-right: 0;
+	}
+	table thead th {
+		padding-bottom: 5px;
+	}
 	
 	#frame {
 		margin-top: 70px;
 	}
-	
-	table thead th {
-		padding-bottom: 5px;
+	#user .glyphicon-user {
+		padding-bottom: 1px;
+	}
+	#user [data-key="name"] {
+		font-size: 1.2em;
+		margin: 0 24px 0 6px;
 	}
 </style>
 
@@ -47,6 +59,16 @@
 					<a href="scores">学分成绩</a>
 				</li>
 			</ul>
+			
+			<form id="user" class="navbar-form navbar-right hidden">
+				<div class="form-group">
+					<p class="form-control-static">
+						<span class="glyphicon glyphicon-user"></span>
+						<span data-key="name">admin</span>
+					</p>
+				</div>
+				<button type="submit" class="btn btn-danger">退出</button>
+			</form>
 		</div>
 	</div>
 </nav>
@@ -67,23 +89,46 @@ $.fn.xToggleLoading = function(on) {
 		$btn.text($btn.data('x-original')).removeClass('disabled');
 	}
 }
-</script>
-<script>
-global.Client = require('./lib/Client.class');
-global.FSM = require('./lib/FSM.class');
 
-global.profile = null;
-global.courses = null;
-global.scores = null;
+var Client = global.Client = require('./lib/Client.class');
+var client = global.client = new Client('jwc.wyu.cn', '/student', 'gbk');
+var FSM = global.FSM = require('./lib/FSM.class');
 
-var $frame = $('#frame'), $nav = $('#nav');
-var fsmPage = global.fsmPage = new global.FSM(['login', 'profile', 'courses', 'scores']);
+
+var $frame = $('#frame'), $nav = $('#nav'), $user = $('#user');
+
+var fsmPage = global.fsmPage = new FSM(['login', 'profile', 'courses', 'scores']);
 fsmPage.onEnter('*', function() {
 	var href = this.getState();
 	$nav.find('a[href]').parent().removeClass('active');
 	$nav.find('a[href="'+ href +'"]').parent().addClass('active');
-	$frame.load('pages/'+ href +'.html');
+	if ($frame.attr('data-href') !== href) {
+		$frame.load('pages/'+ href +'.html').attr('data-href', href);
+	}
 }).setState('login');
+
+var fsmUser = global.fsmUser = new FSM(['offline', 'online']);
+fsmUser.onEnter('online', function() {
+	var name = global.profile.name;
+	$user.find('[data-key="name"]').text(name);
+	$user.removeClass('hidden');
+	fsmPage.setState('profile');
+}).onEnter('offline', function() {
+	global.profile = null;
+	global.courses = null;
+	global.scores = null;
+	$user.addClass('hidden');
+	$user.find('[data-key="name"]').text('');
+	fsmPage.setState('login');
+}).setState('offline');
+
+$user.on('submit', function(ev) {
+	ev.preventDefault();
+	client.get('/exit.asp', {}, {}, function() {
+		fsmUser.setState('offline');
+	});
+	return false;
+});
 $nav.delegate('a[href]', 'click', function() {
 	fsmPage.setState($(this).attr('href'));
 	return false;

@@ -1,4 +1,4 @@
-
+﻿
 
 <style scoped>
 
@@ -36,15 +36,20 @@
 
 <script>
 (function() {
-	var client = new global.Client('jwc.wyu.cn', '/student', 'gbk'),
-		fsmPage = global.fsmPage;
+	var client = global.client,
+		fsmPage = global.fsmPage,
+		fsmUser = global.fsmUser;
+		
 	var $login = $('#login'),
 		$btn = $login.find('[type="submit"]');
+	var parsers = {
+		profile: parseProfile,
+		courses: parseCourses,
+		scores: parseScores
+	}
 	
-	$login.on('submit', function(ev) {
-		global.profile = null;
-		global.courses = null;
-		
+	$login.off('submit').on('submit', function(ev) {
+		fsmUser.setState('offline');
 		var $form = $(this);
 		$btn.xToggleLoading(true);
 		ev.preventDefault();
@@ -60,38 +65,33 @@
 						{}, function(err, res, body){
 							var success = /welcome/.test(body);
 							if (success) {
-									// 加载资料
-									var toLoad = [{
-										url: '/f1.asp',
-										callback: function(body) {
-											global.profile = parseProfile(body);
-										}
-									}, {
-										url: '/f3.asp',
-										callback: function(body) {
-											global.courses = parseCourses(body);
-										}
-									}, {
-										url: '/f4_myscore.asp',
-										callback: function(body) {
-											global.scores = parseScores(body);
-										}
-									}], numLoaded = 0;
-									_.each(toLoad, function(val) {
-										client.get(val.url, {}, {}, function(err, res, body) {
-											try {
-												val.callback(body);
-												numLoaded ++;
-												if (numLoaded === toLoad.length) {
-													fsmPage.setState('profile');
-												}
-											} catch (err) {
-												alert('资料加载失败');
-												$btn.xToggleLoading(false);
-												fsmPage.setState('login');
+								// 加载资料
+								var toLoad = [{
+									name: 'profile',
+									url: '/f1.asp'
+								}, {
+									name: 'courses',
+									url: '/f3.asp'
+								}, {
+									name: 'scores',
+									url: '/f4_myscore.asp'
+								}], numLoaded = 0;
+								_.each(toLoad, function(val) {
+									client.get(val.url, {}, {}, function(err, res, body) {
+										try {
+											global[val.name] = parsers[val.name](body);
+											console.log('got '+ val.name);
+											
+											numLoaded ++;
+											if (numLoaded === toLoad.length) {
+												fsmUser.setState('online');
 											}
-										});
+										} catch (err) {
+											alert('资料加载失败');
+											$btn.xToggleLoading(false);
+										}
 									});
+								});
 							} else {
 								alert('登录信息错误');
 								$btn.xToggleLoading(false);
@@ -140,7 +140,7 @@
 		});
 		
 		return {
-			xqkc: xqkc,
+			xqkc: xqkc.reverse(),
 			d2kt: d2kt
 		};
 		
