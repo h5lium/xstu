@@ -1,0 +1,74 @@
+﻿
+
+<style scoped>
+table {
+	margin-bottom: 30px;
+}
+</style>
+
+
+<div id="scores" class="hidden"></div>
+
+<script>
+(function() {
+	var $scores = $('#scores');
+	
+	if (global.scores) {
+		displayScores(global.scores);
+	} else {
+		alert('请先登录');
+		$frame.xLoad('login');
+	}
+	
+	function displayScores(scores) {
+		var d2kt = scores.d2kt,
+			xqkc = scores.xqkc;
+		var tableHtml = ['<table class="table table-striped">',
+		 	'<caption></caption>',
+		 	'<thead></thead>',
+		 	'<tbody></tbody>',
+		'</table>'].join(''), $table, $thead, $tbody, $tr;
+		
+		// 第二课堂
+		var $d2kt = $(tableHtml);
+		$thead = $d2kt.find('thead'),
+		$tbody = $d2kt.find('tbody');
+		$d2kt.find('caption').text(d2kt.title);
+		$tr = $('<tr></tr>');
+		_.each(d2kt.fields, function(val) {
+			$('<th></th>').text(val).appendTo($tr);
+		});
+		$tr.appendTo($thead);
+		_.each(d2kt.records, function(val) {
+			$tr = $('<tr></tr>');
+			_.each(val, function(val) {
+				$('<td></td>').text(val).appendTo($tr);
+			});
+			$tr.appendTo($tbody);
+		});
+		$d2kt.appendTo($scores);
+		
+		// 学期课程
+		_.each(xqkc.reverse(), function(val) {
+			var $xq = $(tableHtml);
+			$thead = $xq.find('thead'),
+			$tbody = $xq.find('tbody');
+			$xq.find('caption').text(val.title);
+			$tr = $('<tr></tr>');
+			_.each(val.fields, function(val) {
+				$('<th></th>').text(val).appendTo($tr);
+				$tr.appendTo($thead);
+			});
+			_.each(val.records, function(val) {
+				$tr = $('<tr></tr>');
+				_.each(val, function(val) {
+					$('<td></td>').text(val).appendTo($tr);
+				});
+				$tr.appendTo($tbody);
+			});
+			$xq.appendTo($scores);
+		});
+		$scores.removeClass('hidden');
+	}
+})();
+</script>

@@ -14,6 +14,7 @@
 		min-width: 0;
 		max-width: 1140px;
 	}
+	
 	#frame {
 		margin-top: 70px;
 	}
@@ -42,6 +43,9 @@
 				<li>
 					<a href="courses">课程表</a>
 				</li>
+				<li>
+					<a href="scores">学分成绩</a>
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -58,7 +62,7 @@ $.fn.xLoad = function(href, callback) {
 	$nav.find('a[href]').parent().removeClass('active');
 	$nav.find('a[href="'+ href +'"]').parent().addClass('active');
 	return $(this).each(function(i, el) {
-		$(el).load(href + '.html', callback || function() {});
+		$(el).load('pages/'+ href +'.html', callback || function() {});
 	});
 }
 $.fn.xToggleLoading = function(on) {
@@ -72,18 +76,16 @@ $.fn.xToggleLoading = function(on) {
 }
 </script>
 <script>
-var Client = require('./lib/Client.class');
-global.client = new Client('jwc.wyu.cn', 'gbk');
+global.Client = require('./lib/Client.class');
 global.profile = null;
 global.courses = null;
 
 var $frame = $('#frame'), $nav = $('#nav');
-
-$frame.xLoad('login');
 $nav.delegate('a[href]', 'click', function() {
 	$frame.xLoad($(this).attr('href'));
 	return false;
 });
+$frame.xLoad('login');
 </script>
 </body>
 </html>

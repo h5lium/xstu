@@ -3,7 +3,7 @@
 	"main": "index.html",
 	"version": "0.0.1",
 	"window": {
-		"toolbar": false,
+		"toolbar": true,
 		"position": "center",
 		"width": 1000,
 		"height": 700,

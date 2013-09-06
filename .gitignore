@@ -1,4 +1,7 @@
 /.project
 /.idea
 /*.zip
+/*.nw
+/dist
 /node_modules
+/__nw

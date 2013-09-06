@@ -1,0 +1,200 @@
+
+
+<style scoped>
+
+</style>
+
+
+<div class="row">
+	<div class="col-sm-4 col-sm-offset-2">
+		
+		<form id="login" class="form-horizontal">
+			<legend>学生登录</legend>
+			
+			<div class="form-group">
+				<label class="control-label col-sm-3">学号</label>
+				<div class="col-sm-9">
+					<input type="text" name="UserCode" class="form-control" autofocus>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-3">密码</label>
+				<div class="col-sm-9">
+					<input type="password" name="UserPwd" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-12">
+					<button type="submit" class="btn btn-primary btn-lg" data-x-loading="登录中...">登录</button>
+				</div>
+			</div>	
+		</form>
+		
+	</div>
+</div>
+
+
+<script>
+(function() {
+	var client = new global.Client('jwc.wyu.cn', '/student', 'gbk');
+	var $login = $('#login'),
+		$btn = $login.find('[type="submit"]');
+	
+	$login.on('submit', function(ev) {
+		global.profile = null;
+		global.courses = null;
+		
+		var $form = $(this);
+		$btn.xToggleLoading(true);
+		ev.preventDefault();
+		// 进入登录页面
+		client.get('/', {}, {}, function(err, res, body) {
+			// 提交登录信息
+			client.get('/rndnum.asp', {}, {}, function(err, res, body) {
+				client.get('/createsession_a.asp', {}, {}, function() {
+					client.get('/createsession_b.asp', {}, {}, function() {
+						// 破验证码
+						client.cookie['LogonNumber'] = '';
+						client.post('/logon.asp', $form.getFormData(),
+						{}, function(err, res, body){
+							var success = /welcome/.test(body);
+							if (success) {
+									// 加载资料
+									var toLoad = [{
+										url: '/f1.asp',
+										callback: function(body) {
+											global.profile = parseProfile(body);
+										}
+									}, {
+										url: '/f3.asp',
+										callback: function(body) {
+											global.courses = parseCourses(body);
+										}
+									}, {
+										url: '/f4_myscore.asp',
+										callback: function(body) {
+											global.scores = parseScores(body);
+										}
+									}], numLoaded = 0;
+									_.each(toLoad, function(val) {
+										client.get(val.url, {}, {}, function(err, res, body) {
+											try {
+												val.callback(body);
+												numLoaded ++;
+												if (numLoaded === toLoad.length) {
+													$frame.xLoad('profile');
+												}
+											} catch (err) {
+												alert('资料加载失败');
+												$btn.xToggleLoading(false);
+												$frame.xLoad('login');
+											}
+										});
+									});
+							} else {
+								alert('登录信息错误');
+								$btn.xToggleLoading(false);
+							}
+						});
+					});
+				});
+			});
+		});
+		return false;
+	});
+	
+	
+	function parseScores(html) {
+		html = html.replace(/\r?\n/g, '')
+		var bodyHtml = html.match(/<body.+<\/body>/)[0],
+			$body = $(bodyHtml),
+			$tables = $body.find('table').slice(0, -1),
+			$trs;
+		
+		// 第二课堂
+		var $d2kt = $tables.eq(-1);
+		var d2kt = {
+			title: $d2kt.prev().text(),
+			fields: [], records: []
+		};
+		$trs = $d2kt.find('tr');
+		d2kt.fields = _.map($trs.eq(0).find('td'), mapRow);
+		$trs.slice(1, -1).each(function(i, el) {
+			d2kt.records.push(_.map($(el).find('td'), mapRow));
+		});
+		// 学期课程
+		var xqkc = [];
+		$tables.slice(0, -1).each(function(i, el) {
+			var xq = {
+				title: $(el).prev().text(),
+				fields: [], records: []
+			}
+			$trs = $(el).find('tr');
+				xq.fields = _.map($trs.eq(0).find('td'), mapRow);
+			$trs.slice(1).each(function(i, el) {
+				xq.records.push(_.map($(el).find('td'), mapRow));
+			});
+			
+			xqkc.push(xq);
+		});
+		
+		return {
+			xqkc: xqkc,
+			d2kt: d2kt
+		};
+		
+		function mapRow(el, i) {
+			return $(el).text().replace(/(^ +)|( +$)/g, '');
+		}
+	}
+	function parseProfile(html) {
+		html = html.replace(/\r?\n\r?/g, '');
+		var match = html.match(/<table.+<\/table>/),
+			tableHtml = match && match[0];
+		if (! tableHtml) {
+			throw new Error();
+		}
+		var $table = $(tableHtml),
+		$trs = $table.find('tr');
+		return {
+		code: $trs.eq(0).find('td').eq(1).text(),
+		name: $trs.eq(0).find('td').eq(3).text(),
+		avatar: $trs.eq(0).find('td').eq(6).find('img').attr('src'),
+		politics: $trs.eq(2).find('td').eq(3).text(),
+		sex: $trs.eq(1).find('td').eq(1).text(),
+		birth: $trs.eq(1).find('td').eq(3).text(),
+		nation: $trs.eq(1).find('td').eq(5).text(),
+		major: $trs.eq(3).find('td').eq(1).text(),
+		class: $trs.eq(3).find('td').eq(3).text(),
+		college: $trs.eq(4).find('td').eq(1).text(),
+		entrance: $trs.eq(5).find('td').eq(3).text(),
+		dormitory: $trs.eq(8).find('td').eq(5).text()
+		}
+	}
+	function parseCourses(html) {
+		html = html.replace(/\r?\n\r?/g, '')
+			.replace(/&nbsp;/g, ' ');
+		var match = html.match(/<TABLE cellSpacing=0 borderColorDark=#eeeeee cellPadding=2 width="99%".+<\/TABLE>/),
+			tableHtml = match && match[0];
+		if (! tableHtml) {
+			throw new Error();
+		}
+		var $table = $(tableHtml),
+			$trs = $table.find('tr');
+
+		var courses = [];
+		var periods = 5,
+			days = $trs.eq(0).find('td').length - 1;
+		for (var i=0, j, $tds; i<periods; i++) {
+			courses[i] = [];
+			$tds = $trs.eq(i + 1).find('td');
+			for (j=0; j<days; j++) {
+				courses[i][j] = $tds.eq(j + 1).html()
+					.replace(/<br>/g, '\n')
+					.replace(/&nbsp;/g, ' ');
+			}
+		}
+		return courses;
+	}
+})();
+</script>
