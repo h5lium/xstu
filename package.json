@@ -1,9 +1,9 @@
 {
 	"name": "xstu",
 	"main": "index.html",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"window": {
-		"toolbar": true,
+		"toolbar": false,
 		"position": "center",
 		"width": 1000,
 		"height": 700,

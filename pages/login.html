@@ -36,7 +36,8 @@
 
 <script>
 (function() {
-	var client = new global.Client('jwc.wyu.cn', '/student', 'gbk');
+	var client = new global.Client('jwc.wyu.cn', '/student', 'gbk'),
+		fsmPage = global.fsmPage;
 	var $login = $('#login'),
 		$btn = $login.find('[type="submit"]');
 	
@@ -82,12 +83,12 @@
 												val.callback(body);
 												numLoaded ++;
 												if (numLoaded === toLoad.length) {
-													$frame.xLoad('profile');
+													fsmPage.setState('profile');
 												}
 											} catch (err) {
 												alert('资料加载失败');
 												$btn.xToggleLoading(false);
-												$frame.xLoad('login');
+												fsmPage.setState('login');
 											}
 										});
 									});

@@ -58,13 +58,6 @@
 <script src="lib/form.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <script>
-$.fn.xLoad = function(href, callback) {
-	$nav.find('a[href]').parent().removeClass('active');
-	$nav.find('a[href="'+ href +'"]').parent().addClass('active');
-	return $(this).each(function(i, el) {
-		$(el).load('pages/'+ href +'.html', callback || function() {});
-	});
-}
 $.fn.xToggleLoading = function(on) {
 	var $btn = $(this);
 	$btn.data('x-original') || $btn.data('x-original', $btn.text());
@@ -77,15 +70,24 @@ $.fn.xToggleLoading = function(on) {
 </script>
 <script>
 global.Client = require('./lib/Client.class');
+global.FSM = require('./lib/FSM.class');
+
 global.profile = null;
 global.courses = null;
+global.scores = null;
 
 var $frame = $('#frame'), $nav = $('#nav');
+var fsmPage = global.fsmPage = new global.FSM(['login', 'profile', 'courses', 'scores']);
+fsmPage.onEnter('*', function() {
+	var href = this.getState();
+	$nav.find('a[href]').parent().removeClass('active');
+	$nav.find('a[href="'+ href +'"]').parent().addClass('active');
+	$frame.load('pages/'+ href +'.html');
+}).setState('login');
 $nav.delegate('a[href]', 'click', function() {
-	$frame.xLoad($(this).attr('href'));
+	fsmPage.setState($(this).attr('href'));
 	return false;
 });
-$frame.xLoad('login');
 </script>
 </body>
 </html>

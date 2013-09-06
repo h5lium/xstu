@@ -25,6 +25,7 @@
 <script>
 (function() {
 	var client = global.client,
+		fsmPage = global.fsmPage,
 		$courses = $('#courses');
 	
 	var $thead = $courses.find('thead');
@@ -38,7 +39,7 @@
 		displayCourses(global.courses);
 	} else {
 		alert('请先登录');
-		$frame.xLoad('login');
+		fsmPage.setState('login');
 	}
 	
 	function displayCourses(courses) {
