@@ -12,6 +12,7 @@
 body {
 	background-color: #fafafa;
 	-webkit-user-select: none;
+	font-family: "微软雅黑", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
 .container {
 	width: 100%;
@@ -38,23 +39,32 @@ a, button, label {
 
 #nav-wrapper {
 	height: 50px;
+	margin-bottom: 20px;
 }
 #nav {
+	height: 50px;
 	background: url(img/octicons-bg.png) center repeat;
 	background-color: #222;
 }
 #nav li.active > a {
 	background-color: rgba(30, 130, 200, 0.3);
 }
-#frame {
-	margin-top: 20px;
+
+#user .form-control-static {
+	padding-top: 4px;
 }
 #user .glyphicon-user {
 	padding-bottom: 1px;
 }
 #user [data-key="name"] {
 	font-size: 1.2em;
-	margin: 0 24px 0 6px;
+	margin: 0 22px 0 6px;
+}
+#user .glyphicon-cog {
+	margin-right: 6px;
+}
+#user .dropdown-menu .glyphicon {
+	margin-right: 10px;
 }
 </style>
 
@@ -73,7 +83,7 @@ a, button, label {
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
 					<li>
-						<a href="profile">学生学籍</a>
+						<a href="profile">学生信息</a>
 					</li>
 					<li>
 						<a href="courses">课程表</a>
@@ -86,11 +96,30 @@ a, button, label {
 				<form id="user" class="navbar-form navbar-right hidden">
 					<div class="form-group">
 						<p class="form-control-static">
-							<span class="glyphicon glyphicon-user"></span>
-							<span data-key="name">admin</span>
+							<i class="glyphicon glyphicon-user"></i>
+							<span data-key="name"></span>
 						</p>
 					</div>
-					<button type="submit" class="btn btn-danger">退出</button>
+					
+					<div class="btn-group">
+						<a class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+							<i class="glyphicon glyphicon-cog"></i>
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a id="repsw">
+									<i class="glyphicon glyphicon-wrench"></i>修改密码
+								</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a id="logout">
+									<i class="glyphicon glyphicon-off"></i>退出登录
+								</a>
+							</li>
+						</ul>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -146,8 +175,7 @@ fsmUser.onEnter('online', function() {
 	fsmPage.setState('login');
 }).setState('offline');
 
-$user.on('submit', function(ev) {
-	ev.preventDefault();
+$('#logout').on('click', function(ev) {
 	client.get('/exit.asp', {}, {}, function() {
 		fsmUser.setState('offline');
 	});
