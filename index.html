@@ -32,7 +32,7 @@ table thead th {
 .rows-striped > .row:nth-child(odd) {
 	background-color: #f7f7f7;
 }
-label {
+a, button, label {
 	cursor: pointer;
 }
 
@@ -104,11 +104,11 @@ label {
 <script src="lib/form.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <script>
-$.fn.xToggleLoading = function(on) {
+$.fn.xToggleLoading = function(loadingTxt) {
 	var $btn = $(this);
 	$btn.data('x-original') || $btn.data('x-original', $btn.text());
-	if (on) {
-		$btn.addClass('disabled').text($btn.data('x-loading'));
+	if (loadingTxt) {
+		$btn.addClass('disabled').text(loadingTxt);
 	} else {
 		$btn.text($btn.data('x-original')).removeClass('disabled');
 	}

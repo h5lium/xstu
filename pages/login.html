@@ -6,12 +6,8 @@
 	padding: 20px;
 	margin: 0 auto;
 }
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
+.form-signin .form-signin-heading {
 	margin-bottom: 10px;
-}
-.form-signin .checkbox {
-	font-weight: normal;
 }
 .form-signin .form-control {
 	position: relative;
@@ -33,6 +29,10 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+#login .btn-group {
+	margin-top: 6px;
+}
 </style>
 
 
@@ -41,7 +41,11 @@
 	<input type="text" name="UserCode" placeholder="学号" class="form-control" autofocus>
 	<input type="password" name="UserPwd" placeholder="密码" class="form-control">
 	
-	<button type="submit" class="btn btn-lg btn-primary btn-block" data-x-loading="登录中...">登录</button>
+	<button type="submit" class="btn btn-primary btn-lg btn-block">登录</button>
+	<div class="btn-group btn-group-justified">
+		<a id="remember" class="btn btn-default active" data-toggle="button">自动登录</a>
+		<a id="forgot" class="btn btn-default">忘记密码?</a>
+	</div>
 </form>
 
 
@@ -62,7 +66,7 @@
 	$login.off('submit').on('submit', function(ev) {
 		fsmUser.setState('offline');
 		var $form = $(this);
-		$btn.xToggleLoading(true);
+		$btn.xToggleLoading('登录中...');
 		ev.preventDefault();
 		// 进入登录页面
 		client.get('/', {}, {}, function(err, res, body) {
@@ -76,6 +80,7 @@
 						{}, function(err, res, body){
 							var success = /welcome/.test(body);
 							if (success) {
+								$btn.xToggleLoading('解析资料中...');
 								// 加载资料
 								var toLoad = [{
 									name: 'profile',
