@@ -36,6 +36,31 @@
 </style>
 
 
+
+<div id="modal-forgot" class="modal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					&times;
+				</button>
+				<h4 class="modal-title">忘记密码</h4>
+			</div>
+			<div class="modal-body">
+				<form id="form-forgot">
+					<input type="text" placeholder="密码" class="form-control">
+					<input type="text" placeholder="重复密码" class="form-control">
+				</form>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-default" data-dismiss="modal">取消</a>
+				<a data-toggle="submit" href="form-forgot" class="btn btn-primary">提交</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <form id="login" class="form-signin">
 	<h2 class="form-signin-heading">学生登录</h2>
 	<input type="text" name="UserCode" placeholder="学号" class="form-control" autofocus>
@@ -44,7 +69,7 @@
 	<button type="submit" class="btn btn-primary btn-lg btn-block">登录</button>
 	<div class="btn-group btn-group-justified">
 		<a id="remember" class="btn btn-default active" data-toggle="button">自动登录</a>
-		<a id="forgot" class="btn btn-default">忘记密码?</a>
+		<a data-toggle="modal" href="#modal-forgot" class="btn btn-default">忘记密码?</a>
 	</div>
 </form>
 
