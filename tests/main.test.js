@@ -13,12 +13,10 @@ testMain();
 
 function testMain() {
 	var client = new Client('jwc.wyu.cn', '/student', 'gbk');
-	// 进入登录页面
 	client.get('/', {}, {}, function(err, res, body) {
-		// 提交登录信息
-		client.get('/rndnum.asp', {}, {}, function(err, res, body) {
-			client.get('/createsession_a.asp', {}, {}, function() {
-				client.get('/createsession_b.asp', {}, {}, function() {
+		client.get('/createsession_a.asp', {}, {}, function() {
+			client.get('/createsession_b.asp', {}, {}, function() {
+				client.get('/rndnum.asp', {}, {}, function(err, res, body) {
 					client.cookie['LogonNumber'] = '';
 					client.post('/logon.asp', {
 						'UserCode': process.argv[2],
@@ -27,14 +25,14 @@ function testMain() {
 						var success = /welcome/.test(body);
 						console.log(success ? '登录成功' : '登录失败');
 				
-						/*client.get('/f1.asp', {}, {}, function(err, res, body) {
+						client.get('/f1.asp', {}, {}, function(err, res, body) {
 							var profile = parseProfile(body);
-							//console.dir(profile);
+							console.dir(profile);
 						});
 						client.get('/f3.asp', {}, {}, function(err, res, body) {
 							var courses = parseCourses(body);
-							//console.dir(courses);
-						});*/
+							console.dir(courses);
+						});
 						client.get('/f4_myscore.asp', {}, {}, function(err, res, body) {
 							var scores = parseScores(body);
 							console.dir(scores);

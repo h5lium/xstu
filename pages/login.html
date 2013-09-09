@@ -37,40 +37,75 @@
 
 
 
-<div id="modal-forgot" class="modal" tabindex="-1">
+<!--<div id="modal-forgot" class="modal" tabindex="-1">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">
-					&times;
-				</button>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">忘记密码</h4>
 			</div>
-			<div class="modal-body">
-				<form id="form-forgot">
-					<input type="text" placeholder="密码" class="form-control">
-					<input type="text" placeholder="重复密码" class="form-control">
-				</form>
-			</div>
-			<div class="modal-footer">
-				<a class="btn btn-default" data-dismiss="modal">取消</a>
-				<a data-toggle="submit" href="form-forgot" class="btn btn-primary">提交</a>
-			</div>
+			<form id="form-forgot" class="form-horizontal">
+				<fieldset>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="control-label col-sm-4">学号</label>
+							<div class="col-sm-5">
+								<input type="text" name="sid" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">姓名</label>
+							<div class="col-sm-5">
+								<input type="text" name="name" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">身份证</label>
+							<div class="col-sm-5">
+								<input type="text" name="idcard" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">新密码</label>
+							<div class="col-sm-5">
+								<input type="password" name="secpwd" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">重复新密码</label>
+							<div class="col-sm-5">
+								<input type="password" name="secpwd2" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-default" data-dismiss="modal">取消</a>
+						<a data-toggle="submit" href="#form-forgot" class="btn btn-primary">提交</a>
+					</div>
+				</fieldset>
+			</form>
 		</div>
 	</div>
-</div>
+</div>-->
 
 
 <form id="login" class="form-signin">
 	<h2 class="form-signin-heading">学生登录</h2>
-	<input type="text" name="UserCode" placeholder="学号" class="form-control" autofocus>
-	<input type="password" name="UserPwd" placeholder="密码" class="form-control">
-	
-	<button type="submit" class="btn btn-primary btn-lg btn-block">登录</button>
-	<div class="btn-group btn-group-justified">
-		<a id="remember" class="btn btn-default active" data-toggle="button">自动登录</a>
-		<a data-toggle="modal" href="#modal-forgot" class="btn btn-default">忘记密码?</a>
-	</div>
+	<fieldset>
+		<input type="text" name="UserCode" placeholder="学号" class="form-control" autofocus>
+		<input type="password" name="UserPwd" placeholder="密码" class="form-control">
+		
+		<button type="submit" class="btn btn-primary btn-lg btn-block">登录</button>
+		<!--<div class="btn-group btn-group-justified">
+			<a id="remember" class="btn btn-default active" data-toggle="button">自动登录</a>
+			<a data-toggle="modal" href="#modal-forgot" class="btn btn-default">忘记密码?</a>
+		</div>-->
+	</fieldset>
 </form>
 
 
@@ -79,33 +114,72 @@
 	var client = global.client,
 		fsmPage = global.fsmPage,
 		fsmUser = global.fsmUser;
-		
+	
 	var $login = $('#login'),
-		$btn = $login.find('[type="submit"]');
+		$btn_login = $login.find('[type="submit"]');
 	var parsers = {
 		profile: parseProfile,
 		courses: parseCourses,
 		scores: parseScores
 	}
 	
-	$login.off('submit').on('submit', function(ev) {
-		fsmUser.setState('offline');
-		var $form = $(this);
-		$btn.xToggleLoading('登录中...');
+	/*$('#form-forgot').off('submit').on('submit', function(ev) {
 		ev.preventDefault();
-		// 进入登录页面
+		var $form = $(this), data = $form.getFormData();
+		var $btn = $('[data-toggle="submit"][href="#'+ $form.attr('id') +'"]').xToggleLoading('提交中...');
+		
 		client.get('/', {}, {}, function(err, res, body) {
-			// 提交登录信息
 			client.get('/rndnum.asp', {}, {}, function(err, res, body) {
 				client.get('/createsession_a.asp', {}, {}, function() {
 					client.get('/createsession_b.asp', {}, {}, function() {
-						// 破验证码
+						client.get('/rspsw.asp', {}, {}, function() {
+							client.get('/rndnum.asp', {}, {}, function() {
+								client.cookie['LogonNumber'] = '';
+								client.post('/getpsw_1.asp', data, {}, function(err, res, body) {
+									$btn.xToggleLoading(false);
+									
+									if (res.statusCode !== 200) {
+										alert('认证信息错误'); return;
+									}
+									if (data.secpwd === '') {
+										alert('密码不能为空'); return;
+									}
+									if (data.secpwd.length > 28) {
+										alert('密码太长'); return;
+									}
+									if (data.secpwd2 !== data.secpwd) {
+										alert('两次密码不一致'); return;
+									}
+									client.post('/savepsw_1.asp', data, {}, function() {
+										alert('重置密码成功');
+										$form.closest('.modal').modal('hide');
+										$form[0].reset();
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+		return false;
+	});*/
+	
+	$login.off('submit').on('submit', function(ev) {
+		fsmUser.setState('offline');
+		var $form = $(this), data = $form.getFormData();
+		$btn_login.xToggleLoading('登录中...');
+		ev.preventDefault();
+		
+		client.get('/', {}, {}, function() {
+			client.get('/createsession_a.asp', {}, {}, function() {
+				client.get('/createsession_b.asp', {}, {}, function() {
+					client.get('/rndnum.asp', {}, {}, function() {
 						client.cookie['LogonNumber'] = '';
-						client.post('/logon.asp', $form.getFormData(),
-						{}, function(err, res, body){
+						client.post('/logon.asp', data, {}, function(err, res, body){
 							var success = /welcome/.test(body);
 							if (success) {
-								$btn.xToggleLoading('资料解析中...');
+								$btn_login.xToggleLoading('资料解析中...');
 								// 加载资料
 								var toLoad = [{
 									name: 'profile',
@@ -129,13 +203,13 @@
 											}
 										} catch (err) {
 											alert('资料加载失败');
-											$btn.xToggleLoading(false);
+											$btn_login.xToggleLoading(false);
 										}
 									});
 								});
 							} else {
 								alert('登录信息错误');
-								$btn.xToggleLoading(false);
+								$btn_login.xToggleLoading(false);
 							}
 						});
 					});

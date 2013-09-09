@@ -72,33 +72,33 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">
-							&times;
-						</button>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
 						<h4 class="modal-title">修改密码</h4>
 					</div>
-					<div class="modal-body">
-						<form id="form-repsw" class="form-horizontal">
-							<div class="form-group">
-								<label class="control-label col-sm-4">密码</label>
-								<div class="col-sm-5">
-									<input type="password" name="secpwd" class="form-control">
+					<form id="form-repsw" class="form-horizontal">
+						<fieldset>
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="control-label col-sm-4">密码</label>
+									<div class="col-sm-5">
+										<input type="password" name="secpwd" class="form-control">
+									</div>
+									<div class="col-sm-2"></div>
 								</div>
-								<div class="col-sm-2"></div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-sm-4">重复密码</label>
-								<div class="col-sm-5">
-									<input type="password" name="secpwd2" class="form-control">
+								<div class="form-group">
+									<label class="control-label col-sm-4">重复密码</label>
+									<div class="col-sm-5">
+										<input type="password" name="secpwd2" class="form-control">
+									</div>
+									<div class="col-sm-2"></div>
 								</div>
-								<div class="col-sm-2"></div>
 							</div>
-						</form>
-					</div>
-					<div class="modal-footer">
-						<a class="btn btn-default" data-dismiss="modal">取消</a>
-						<a data-toggle="submit" href="#form-repsw" class="btn btn-primary">提交</a>
-					</div>
+							<div class="modal-footer">
+								<a class="btn btn-default" data-dismiss="modal">取消</a>
+								<a data-toggle="submit" href="#form-repsw" class="btn btn-primary">提交</a>
+							</div>
+						</fieldset>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -166,84 +166,95 @@
 		<script src="lib/form.js"></script>
 		<script src="lib/bootstrap/js/bootstrap.min.js"></script>
 		<script>
-			$.fn.xToggleLoading = function(loadingTxt) {
-				var $btn = $(this);
+		$.fn.xToggleLoading = function(loadingTxt) {
+			return $(this).each(function(i, el) {
+				var $btn = $(el);
 				$btn.data('x-original') || $btn.data('x-original', $btn.text());
+				var $form;
+				if ($btn.is('[type="submit"]')) {
+					$form = $btn.closest('form')
+				} else if ($btn.is('[data-toggle="submit"]')) {
+					$form = $($btn.attr('href'));
+				}
+				$form.blur();
 				if (loadingTxt) {
-					$btn.addClass('disabled').text(loadingTxt);
+					$btn.attr('disabled', true).text(loadingTxt);
+					$form.find('fieldset').attr('disabled', true);
 				} else {
-					$btn.text($btn.data('x-original')).removeClass('disabled');
+					$btn.text($btn.data('x-original')).removeAttr('disabled');
+					$form.find('fieldset').removeAttr('disabled');
 				}
+			});
+		}
+		var Client = global.Client = require('./lib/Client.class');
+		var client = global.client = new Client('jwc.wyu.cn', '/student', 'gb2312');
+		var FSM = global.FSM = require('./lib/FSM.class');
+
+		var $frame = $('#frame'), $nav = $('#nav'), $form_user = $('#form-user');
+
+		var fsmPage = global.fsmPage = new FSM(['login', 'profile', 'courses', 'scores']);
+		fsmPage.onEnter('*', function() {
+			var href = this.getState();
+			$nav.find('a[href]').parent().removeClass('active');
+			$nav.find('a[href="' + href + '"]').parent().addClass('active');
+			if ($frame.attr('data-href') !== href) {
+				$frame.load('pages/' + href + '.html').attr('data-href', href);
 			}
-			var Client = global.Client = require('./lib/Client.class');
-			var client = global.client = new Client('jwc.wyu.cn', '/student', 'gbk');
-			var FSM = global.FSM = require('./lib/FSM.class');
-
-			var $frame = $('#frame'), $nav = $('#nav'), $form_user = $('#form-user');
-
-			var fsmPage = global.fsmPage = new FSM(['login', 'profile', 'courses', 'scores']);
-			fsmPage.onEnter('*', function() {
-				var href = this.getState();
-				$nav.find('a[href]').parent().removeClass('active');
-				$nav.find('a[href="' + href + '"]').parent().addClass('active');
-				if ($frame.attr('data-href') !== href) {
-					$frame.load('pages/' + href + '.html').attr('data-href', href);
-				}
-			}).setState('login');
-			
-			var fsmUser = global.fsmUser = new FSM(['offline', 'online']);
-			fsmUser.onEnter('online', function() {
-				var name = global.profile.name;
-				$form_user.find('[data-key="name"]').text(name);
-				$form_user.removeClass('hidden');
-				fsmPage.setState('profile');
-			}).onEnter('offline', function() {
-				global.profile = null;
-				global.courses = null;
-				global.scores = null;
-				$form_user.addClass('hidden');
-				$form_user.find('[data-key="name"]').text('');
-				fsmPage.setState('login');
-			}).setState('offline');
-			
-			$('body').delegate('[data-toggle="page"]', 'click', function() {
-				fsmPage.setState($(this).attr('href'));
+		}).setState('login');
+		
+		var fsmUser = global.fsmUser = new FSM(['offline', 'online']);
+		fsmUser.onEnter('online', function() {
+			var name = global.profile.name;
+			$form_user.find('[data-key="name"]').text(name);
+			$form_user.removeClass('hidden');
+			fsmPage.setState('profile');
+		}).onEnter('offline', function() {
+			global.profile = null;
+			global.courses = null;
+			global.scores = null;
+			$form_user.addClass('hidden');
+			$form_user.find('[data-key="name"]').text('');
+			fsmPage.setState('login');
+		}).setState('offline');
+		
+		$('body').delegate('[data-toggle="page"]', 'click', function() {
+			fsmPage.setState($(this).attr('href'));
+			return false;
+		}).delegate('[data-toggle="submit"]', 'click', function() {
+			$($(this).attr('href')).submit();
+			return false;
+		}).delegate('form', 'keydown', function(ev) {
+			if (ev.keyCode === 13) {
+				$(this).submit().find(':focus').blur();
 				return false;
-			}).delegate('[data-toggle="submit"]', 'click', function() {
-				$($(this).attr('href')).submit();
-				return false;
-			}).delegate('form', 'keydown', function(ev) {
-				if (ev.keyCode === 13) {
-					$(this).submit();
-					return false;
-				}
+			}
+		});
+		
+		$('#btn-logout').on('click', function(ev) {
+			client.get('/exit.asp', {}, {}, function() {
+				fsmUser.setState('offline');
 			});
-			
-			$('#btn-logout').on('click', function(ev) {
-				client.get('/exit.asp', {}, {}, function() {
-					fsmUser.setState('offline');
-				});
-				return false;
+			return false;
+		});
+		$('#form-repsw').on('submit', function(ev) {
+			ev.preventDefault();
+			var $form = $(this), data = $form.getFormData();
+			if (data.secpwd === '') {
+				alert('密码不能为空'); return false;
+			}
+			if (data.secpwd.length > 28) {
+				alert('密码太长'); return false;
+			}
+			if (data.secpwd2 !== data.secpwd) {
+				alert('两次密码不一致'); return false;
+			}
+			client.post('/savepsw.asp', data, {}, function(err, res, body) {
+				alert('修改密码成功');
+				$form.closest('.modal').modal('hide');
+				$form[0].reset();
 			});
-			$('#form-repsw').on('submit', function(ev) {
-				ev.preventDefault();
-				var $form = $(this), data = $form.getFormData();
-				if (data.secpwd === '') {
-					alert('密码不能为空'); return false;
-				}
-				if (data.secpwd.length > 28) {
-					alert('密码太长'); return false;
-				}
-				if (data.secpwd2 !== data.secpwd) {
-					alert('两次密码不一致'); return false;
-				}
-				client.post('/savepsw.asp', data, {}, function(err, res, body) {
-					alert('修改密码成功');
-					$form.closest('.modal').modal('hide');
-					$form[0].reset();
-				});
-				return false;
-			});
+			return false;
+		});
 		</script>
 	</body>
 </html>
