@@ -1,0 +1,21 @@
+
+
+
+	
+
+<script src="http://code.jquery.com/jquery.min.js"></script>
+
+<script>
+	var win = window.open('about:blank');
+	var $body = $(win.document.body);
+	var $form = $('<form>').attr({
+		action: '',
+		method: 'GET'
+	}).appendTo($body);
+	
+	$form.submit();
+	$(win).on('beforeunload', function() {
+		alert(win.location.href);
+		return false;
+	});
+</script>

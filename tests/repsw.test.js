@@ -9,7 +9,7 @@ var fs = require('fs');
 testMain();
 
 function testMain() {
-	var client = new Client('jwc.wyu.cn', '/student', 'gb2312');
+	var client = new Client('jwc.wyu.cn', '/student', 'gbk');
 	// 进入登录页面
 	client.get('/', {}, {}, function(err, res, body) {
 		// 提交登录信息

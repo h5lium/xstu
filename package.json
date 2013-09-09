@@ -1,13 +1,13 @@
 {
 	"name": "xstu",
 	"main": "index.html",
-	"version": "0.0.6",
+	"version": "1.0.0",
 	"window": {
 		"toolbar": false,
 		"position": "center",
-		"width": 1000,
+		"width": 940,
 		"height": 700,
-		"min_width": 1000,
+		"min_width": 940,
 		"min_height": 700
 	},
 	"dependencies": {
