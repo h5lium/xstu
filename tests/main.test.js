@@ -21,7 +21,9 @@ function testMain() {
 					client.post('/logon.asp', {
 						'UserCode': process.argv[2],
 						'UserPwd': process.argv[3]
-					}, {}, function(err, res, body) {
+					}, {
+						'Referer': 'http://jwc.wyu.edu.cn/student/body.htm'
+					}, function(err, res, body) {
 						var success = /welcome/.test(body);
 						console.log(success ? '登录成功' : '登录失败');
 				
@@ -33,7 +35,9 @@ function testMain() {
 							var courses = parseCourses(body);
 							console.dir(courses);
 						});
-						client.get('/f4_myscore.asp', {}, {}, function(err, res, body) {
+						client.get('/f4_myscore11.asp', {}, {
+							'Referer': 'http://jwc.wyu.edu.cn/student/menu.asp'
+						}, function(err, res, body) {
 							var scores = parseScores(body);
 							console.dir(scores);
 						});
