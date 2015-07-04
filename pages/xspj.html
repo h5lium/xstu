@@ -1,0 +1,25 @@
+
+
+<script>
+(function() {
+	var client = new global.Client('jwc.wyu.cn', '/', 'gbk');
+	
+	loadXspj();
+	
+	function loadXspj() {
+		client.get('/xks/', {}, {}, function(err, res, body) {
+			if (err) {
+				$frame.text('错误：'+ err.message);
+				return;
+			}
+			var loc = res.headers['location'];
+			if (/fullvisit/.test(loc)) {
+				$frame.text('满人');
+			} else {
+				var match = body.match(/<body>.*<\/body>/);
+				match && $frame.html(match[0]);
+			}
+		});
+	}
+})();
+</script>

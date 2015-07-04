@@ -1,0 +1,60 @@
+﻿
+
+<style scoped>
+#courses thead th, 
+#courses tbody td {
+	text-align: center!important;
+}
+#courses thead th {
+	width: 17%;
+}
+#courses thead th:first-child {
+	width: 15%;
+}
+#courses tbody td:first-child {
+	vertical-align: middle;
+}
+</style>
+
+
+<table id="courses" class="table table-striped hidden">
+	<thead></thead>
+	<tbody></tbody>
+</table>
+
+<script>
+(function() {
+	var client = global.client,
+		fsmPage = global.fsmPage,
+		$courses = $('#courses');
+	
+	var $thead = $courses.find('thead');
+	var txtDays = ['一', '二', '三', '四', '五'];
+	$('<th></th>').text('').appendTo($thead);
+	_.each(txtDays, function(val, i) {
+		$('<th></th>').text('星期' + val).appendTo($thead);
+	});
+	
+	if (global.courses) {
+		displayCourses(global.courses);
+	} else {
+		alert('请先登录');
+		fsmPage.setState('login');
+	}
+	
+	function displayCourses(courses) {
+		var txtSegs = ['第一大节', '第二大节', '第三大节', '第四大节', '晚上'];
+		var $tbody = $courses.find('tbody'), $tr;
+		_.each(courses, function(seg, i) {
+			$tr = $('<tr></tr>');
+			$('<td></td>').html('<strong>'+ txtSegs[i] +'</strong>').appendTo($tr);
+			_.each(seg, function(val) {
+					$('<td></td>').html(val.replace(/\n/g, '<br>')).appendTo($tr);
+			});
+			$tr.appendTo($tbody);
+		});
+		$courses.removeClass('hidden');
+	}
+	
+})();
+</script>

@@ -1,0 +1,21 @@
+{
+	"name": "xstu",
+	"main": "index.html",
+	"version": "1.0.0",
+	"window": {
+		"toolbar": false,
+		"position": "center",
+		"width": 940,
+		"height": 700,
+		"min_width": 940,
+		"min_height": 700
+	},
+	"dependencies": {
+		"underscore": "1.5.1",
+		"bufferhelper": "0.2.0",
+		"iconv-lite": "0.2.10",
+		"domino": "1.0.11",
+		"mocha": "0.10.2",
+		"zepto-node": "1.0.0"
+	}
+}

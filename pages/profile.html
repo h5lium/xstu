@@ -1,0 +1,115 @@
+﻿
+
+<style scoped>
+#profile [data-key] strong, #profile [data-key] span {
+	display: inline-block;
+	line-height: 50px;
+}
+#profile [data-key] strong {
+	width: 90px;
+}
+#profile .rows-striped > .row {
+	height: 50px;
+}
+#profile .rows-striped > .row {
+	border-top: 1px solid #dddddd;
+}
+#profile .rows-striped > .row:first-child {
+	border-top: none;
+}
+
+#avatar {
+	width: 90%;
+	max-width: 140px;
+	margin: auto;
+	height: auto;
+}
+</style>
+
+
+<div id="profile" class="container hidden">
+	<div class="row">
+		<div class="col-sm-10 col-sm-offset-1">
+			<div class="row">
+				<div class="col-sm-3">
+					<img id="avatar" class="img-thumbnail">
+				</div>
+				<div class="col-sm-9 rows-striped">
+					<div class="row">
+						<div class="col-sm-6">
+							<div data-key="code"></div>
+						</div>
+						<div class="col-sm-6">
+							<div data-key="name"></div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div data-key="birth"></div>
+						</div>
+						<div class="col-sm-6">
+							<div data-key="nation"></div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div data-key="entrance"></div>
+						</div>
+						<div class="col-sm-6">
+							<div data-key="politics"></div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div data-key="class"></div>
+						</div>
+						<div class="col-sm-6">
+							<div data-key="dormitory"></div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div data-key="college"></div>
+						</div>
+						<div class="col-sm-6">
+							<div data-key="major"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+(function() {
+	var $profile = $('#profile'),
+		fsmPage = global.fsmPage;
+	
+	if (global.profile) {
+		displayProfile(global.profile);
+	} else {
+		alert('请先登录');
+		fsmPage.setState('login');
+	}
+	
+	function displayProfile(profile) {
+		var titles = {
+			code: '学号', name: '姓名', avatar: '头像', politics: '政治面貌',
+			sex: '性别', birth: '出生年月', nation: '民族', major: '专业',
+			class: '班级', college: '学院', entrance: '入学时间', dormitory: '宿舍地址'
+		}, html;
+		_.each(_.omit(profile, 'sex'), function(val, key) {
+			if (key === 'avatar') {
+				$('#avatar').attr('src', 'http://jwc.wyu.cn/student/'+ val);
+			} else {
+				html = '<strong>'+ titles[key] +'</strong>';
+				html += '<span>'+ val +'</span>';
+			}
+			$profile.find('[data-key="'+ key +'"]').html(html);
+		});
+		$profile.removeClass('hidden');
+	}
+})();
+</script>

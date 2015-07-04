@@ -1,0 +1,260 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>WYU XStu</title>
+
+		<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme.min.css">
+	</head>
+	<body>
+		<style scoped>
+			body {
+				background-color: #fafafa;
+				-webkit-user-select: none;
+				font-family: "微软雅黑", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+			}
+			.container {
+				width: 100%;
+				min-width: 0;
+				max-width: 1140px;
+			}
+			.navbar-inverse .navbar-right {
+				color: white;
+			}
+			.navbar-form {
+				padding-right: 0;
+				margin-right: -15px;
+			}
+			table thead th {
+				padding-bottom: 5px;
+			}
+			.table-striped > tbody > tr:nth-child(odd) > td, .rows-striped > .row:nth-child(odd) {
+				background-color: #f7f7f7;
+			}
+			a, button, label {
+				cursor: pointer;
+			}
+
+			#nav-wrapper {
+				height: 50px;
+				margin-bottom: 20px;
+			}
+			#nav {
+				height: 50px;
+				background: url(img/octicons-bg.png) center repeat;
+				background-color: #222;
+			}
+			#nav li.active > a {
+				background-color: rgba(30, 130, 200, 0.3);
+			}
+
+			#form-user .form-control-static {
+				padding-top: 4px;
+			}
+			#form-user .glyphicon-user {
+				padding-bottom: 1px;
+			}
+			#form-user [data-key="name"] {
+				font-size: 1.2em;
+				margin: 0 22px 0 6px;
+			}
+			#form-user .glyphicon-cog {
+				margin-right: 6px;
+			}
+			#form-user .dropdown-menu .glyphicon {
+				margin-right: 10px;
+			}
+		</style>
+		
+		
+		<div id="modal-repsw" class="modal" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">修改密码</h4>
+					</div>
+					<form id="form-repsw" class="form-horizontal">
+						<fieldset>
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="control-label col-sm-4">密码</label>
+									<div class="col-sm-5">
+										<input type="password" name="secpwd" class="form-control">
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-sm-4">重复密码</label>
+									<div class="col-sm-5">
+										<input type="password" name="secpwd2" class="form-control">
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<a class="btn btn-default" data-dismiss="modal">取消</a>
+								<a data-toggle="submit" href="#form-repsw" class="btn btn-primary">提交</a>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div id="nav-wrapper">
+			<nav id="nav" class="navbar navbar-inverse navbar-fixed-top">
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a data-toggle="page" href="login" class="navbar-brand">XStu</a>
+					</div>
+
+					<div class="collapse navbar-collapse navbar-ex1-collapse">
+						<ul class="nav navbar-nav">
+							<li>
+								<a data-toggle="page" href="profile">学生信息</a>
+							</li>
+							<li>
+								<a data-toggle="page" href="courses">课程表</a>
+							</li>
+							<li>
+								<a data-toggle="page" href="scores">学分成绩</a>
+							</li>
+						</ul>
+
+						<form id="form-user" class="navbar-form navbar-right hidden">
+							<div class="form-group">
+								<p class="form-control-static">
+									<i class="glyphicon glyphicon-user"></i>
+									<span data-key="name"></span>
+								</p>
+							</div>
+
+							<div class="btn-group">
+								<a class="btn btn-warning dropdown-toggle" data-toggle="dropdown"> <i class="glyphicon glyphicon-cog"></i> <span class="caret"></span> </a>
+								<ul class="dropdown-menu">
+									<li>
+										<a data-toggle="modal" href="#modal-repsw">
+											<i class="glyphicon glyphicon-wrench"></i>修改密码 
+										</a>
+									</li>
+									<li class="divider"></li>
+									<li>
+										<a id="btn-logout">
+											<i class="glyphicon glyphicon-off"></i>退出登录
+										 </a>
+									</li>
+								</ul>
+							</div>
+						</form>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+		<div id="frame" class="container"></div>
+
+		<script src="lib/underscore-min.js"></script>
+		<script src="lib/jquery.min.js"></script>
+		<script src="lib/form.js"></script>
+		<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+		<script>
+		$.fn.xToggleLoading = function(loadingTxt) {
+			return $(this).each(function(i, el) {
+				var $btn = $(el);
+				$btn.data('x-original') || $btn.data('x-original', $btn.text());
+				var $form;
+				if ($btn.is('[type="submit"]')) {
+					$form = $btn.closest('form')
+				} else if ($btn.is('[data-toggle="submit"]')) {
+					$form = $($btn.attr('href'));
+				}
+				$form.blur();
+				if (loadingTxt) {
+					$btn.attr('disabled', true).text(loadingTxt);
+					$form.find('fieldset').attr('disabled', true);
+				} else {
+					$btn.text($btn.data('x-original')).removeAttr('disabled');
+					$form.find('fieldset').removeAttr('disabled');
+				}
+			});
+		}
+		var Client = global.Client = require('./lib/Client.class');
+		var client = global.client = new Client('jwc.wyu.cn', '/student', 'gbk');
+		var FSM = global.FSM = require('./lib/FSM.class');
+
+		var $frame = $('#frame'), $nav = $('#nav'), $form_user = $('#form-user');
+
+		var fsmPage = global.fsmPage = new FSM(['login', 'profile', 'courses', 'scores']);
+		fsmPage.onEnter('*', function() {
+			var href = this.getState();
+			$nav.find('a[href]').parent().removeClass('active');
+			$nav.find('a[href="' + href + '"]').parent().addClass('active');
+			if ($frame.attr('data-href') !== href) {
+				$frame.load('pages/' + href + '.html').attr('data-href', href);
+			}
+		}).setState('login');
+		
+		var fsmUser = global.fsmUser = new FSM(['offline', 'online']);
+		fsmUser.onEnter('online', function() {
+			var name = global.profile.name;
+			$form_user.find('[data-key="name"]').text(name);
+			$form_user.removeClass('hidden');
+			fsmPage.setState('profile');
+		}).onEnter('offline', function() {
+			global.profile = null;
+			global.courses = null;
+			global.scores = null;
+			$form_user.addClass('hidden');
+			$form_user.find('[data-key="name"]').text('');
+			fsmPage.setState('login');
+		}).setState('offline');
+		
+		$('body').delegate('[data-toggle="page"]', 'click', function() {
+			fsmPage.setState($(this).attr('href'));
+			return false;
+		}).delegate('[data-toggle="submit"]', 'click', function() {
+			$($(this).attr('href')).submit();
+			return false;
+		}).delegate('form', 'keydown', function(ev) {
+			if (ev.keyCode === 13) {
+				$(this).submit().find(':focus').blur();
+				return false;
+			}
+		});
+		
+		$('#btn-logout').on('click', function(ev) {
+			client.get('/exit.asp', {}, {}, function() {
+				fsmUser.setState('offline');
+			});
+			return false;
+		});
+		$('#form-repsw').on('submit', function(ev) {
+			ev.preventDefault();
+			var $form = $(this), data = $form.getFormData();
+			if (data.secpwd === '') {
+				alert('密码不能为空'); return false;
+			}
+			if (data.secpwd.length > 28) {
+				alert('密码太长'); return false;
+			}
+			if (data.secpwd2 !== data.secpwd) {
+				alert('两次密码不一致'); return false;
+			}
+			client.post('/savepsw.asp', data, {}, function(err, res, body) {
+				alert('修改密码成功');
+				$form.closest('.modal').modal('hide');
+				$form[0].reset();
+			});
+			return false;
+		});
+		</script>
+	</body>
+</html>

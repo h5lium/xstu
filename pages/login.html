@@ -1,0 +1,316 @@
+﻿
+
+<style scoped>
+.form-signin {
+	max-width: 330px;
+	padding: 20px;
+	margin: 0 auto;
+}
+.form-signin .form-signin-heading {
+	margin-bottom: 10px;
+}
+.form-signin .form-control {
+	position: relative;
+	font-size: 16px;
+	height: auto;
+	padding: 10px;
+	-webkit-box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+#login .btn-group {
+	margin-top: 6px;
+}
+</style>
+
+
+
+<!--<div id="modal-forgot" class="modal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">忘记密码</h4>
+			</div>
+			<form id="form-forgot" class="form-horizontal">
+				<fieldset>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="control-label col-sm-4">学号</label>
+							<div class="col-sm-5">
+								<input type="text" name="sid" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">姓名</label>
+							<div class="col-sm-5">
+								<input type="text" name="name" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">身份证</label>
+							<div class="col-sm-5">
+								<input type="text" name="idcard" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">新密码</label>
+							<div class="col-sm-5">
+								<input type="password" name="secpwd" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-4">重复新密码</label>
+							<div class="col-sm-5">
+								<input type="password" name="secpwd2" class="form-control">
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-default" data-dismiss="modal">取消</a>
+						<a data-toggle="submit" href="#form-forgot" class="btn btn-primary">提交</a>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
+</div>-->
+
+
+<form id="login" class="form-signin">
+	<h2 class="form-signin-heading">学生登录</h2>
+	<fieldset>
+		<input type="text" name="UserCode" placeholder="学号" class="form-control" autofocus>
+		<input type="password" name="UserPwd" placeholder="密码" class="form-control">
+		
+		<button type="submit" class="btn btn-primary btn-lg btn-block">登录</button>
+		<!--<div class="btn-group btn-group-justified">
+			<a id="remember" class="btn btn-default active" data-toggle="button">自动登录</a>
+			<a data-toggle="modal" href="#modal-forgot" class="btn btn-default">忘记密码?</a>
+		</div>-->
+	</fieldset>
+</form>
+
+
+<script>
+(function() {
+	var client = global.client,
+		fsmPage = global.fsmPage,
+		fsmUser = global.fsmUser;
+	
+	var $login = $('#login'),
+		$btn_login = $login.find('[type="submit"]');
+	var parsers = {
+		profile: parseProfile,
+		courses: parseCourses,
+		scores: parseScores
+	}
+	
+	/*$('#form-forgot').off('submit').on('submit', function(ev) {
+		ev.preventDefault();
+		var $form = $(this), data = $form.getFormData();
+		var $btn = $('[data-toggle="submit"][href="#'+ $form.attr('id') +'"]').xToggleLoading('提交中...');
+		
+		client.get('/', {}, {}, function(err, res, body) {
+			client.get('/rndnum.asp', {}, {}, function(err, res, body) {
+				client.get('/createsession_a.asp', {}, {}, function() {
+					client.get('/createsession_b.asp', {}, {}, function() {
+						client.get('/rspsw.asp', {}, {}, function() {
+							client.get('/rndnum.asp', {}, {}, function() {
+								client.cookie['LogonNumber'] = '';
+								client.post('/getpsw_1.asp', data, {}, function(err, res, body) {
+									$btn.xToggleLoading(false);
+									
+									if (res.statusCode !== 200) {
+										alert('认证信息错误'); return;
+									}
+									if (data.secpwd === '') {
+										alert('密码不能为空'); return;
+									}
+									if (data.secpwd.length > 28) {
+										alert('密码太长'); return;
+									}
+									if (data.secpwd2 !== data.secpwd) {
+										alert('两次密码不一致'); return;
+									}
+									client.post('/savepsw_1.asp', data, {}, function() {
+										alert('重置密码成功');
+										$form.closest('.modal').modal('hide');
+										$form[0].reset();
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+		return false;
+	});*/
+	
+	$login.off('submit').on('submit', function(ev) {
+		fsmUser.setState('offline');
+		var $form = $(this), data = $form.getFormData();
+		$btn_login.xToggleLoading('登录中...');
+		ev.preventDefault();
+		
+		client.get('/', {}, {}, function() {
+			client.get('/createsession_a.asp', {}, {}, function() {
+				client.get('/createsession_b.asp', {}, {}, function() {
+					client.get('/rndnum.asp', {}, {}, function() {
+						client.cookie['LogonNumber'] = '';
+						client.post('/logon.asp', data, {}, function(err, res, body){
+							var success = /welcome/.test(body);
+							if (success) {
+								$btn_login.xToggleLoading('资料解析中...');
+								// 加载资料
+								var toLoad = [{
+									name: 'profile',
+									url: '/f1.asp'
+								}, {
+									name: 'courses',
+									url: '/f3.asp'
+								}, {
+									name: 'scores',
+									url: '/f4_myscore.asp'
+								}], numLoaded = 0;
+								_.each(toLoad, function(val) {
+									client.get(val.url, {}, {}, function(err, res, body) {
+										try {
+											global[val.name] = parsers[val.name](body);
+											console.log('got '+ val.name);
+											
+											numLoaded ++;
+											if (numLoaded === toLoad.length) {
+												fsmUser.setState('online');
+											}
+										} catch (err) {
+											alert('资料加载失败');
+											$btn_login.xToggleLoading(false);
+										}
+									});
+								});
+							} else {
+								alert('登录信息错误');
+								$btn_login.xToggleLoading(false);
+							}
+						});
+					});
+				});
+			});
+		});
+		return false;
+	});
+	
+	
+	function parseScores(html) {
+		html = html.replace(/\r?\n/g, '')
+		var bodyHtml = html.match(/<body.+<\/body>/)[0],
+			$body = $(bodyHtml),
+			$tables = $body.find('table').slice(0, -1),
+			$trs;
+		
+		// 第二课堂
+		var $d2kt = $tables.eq(-1);
+		var d2kt = {
+			title: $d2kt.prev().text(),
+			fields: [], records: []
+		};
+		$trs = $d2kt.find('tr');
+		d2kt.fields = _.map($trs.eq(0).find('td'), mapRow);
+		$trs.slice(1, -1).each(function(i, el) {
+			d2kt.records.push(_.map($(el).find('td'), mapRow));
+		});
+		// 学期课程
+		var xqkc = [];
+		$tables.slice(0, -1).each(function(i, el) {
+			var xq = {
+				title: $(el).prev().text(),
+				fields: [], records: []
+			}
+			$trs = $(el).find('tr');
+				xq.fields = _.map($trs.eq(0).find('td'), mapRow);
+			$trs.slice(1).each(function(i, el) {
+				xq.records.push(_.map($(el).find('td'), mapRow));
+			});
+			
+			xqkc.push(xq);
+		});
+		
+		return {
+			xqkc: xqkc.reverse(),
+			d2kt: d2kt
+		};
+		
+		function mapRow(el, i) {
+			return $(el).text().replace(/(^ +)|( +$)/g, '');
+		}
+	}
+	function parseProfile(html) {
+		html = html.replace(/\r?\n\r?/g, '');
+		var match = html.match(/<table.+<\/table>/),
+			tableHtml = match && match[0];
+		if (! tableHtml) {
+			throw new Error();
+		}
+		var $table = $(tableHtml),
+		$trs = $table.find('tr');
+		return {
+		code: $trs.eq(0).find('td').eq(1).text(),
+		name: $trs.eq(0).find('td').eq(3).text(),
+		avatar: $trs.eq(0).find('td').eq(6).find('img').attr('src'),
+		politics: $trs.eq(2).find('td').eq(3).text(),
+		sex: $trs.eq(1).find('td').eq(1).text(),
+		birth: $trs.eq(1).find('td').eq(3).text(),
+		nation: $trs.eq(1).find('td').eq(5).text(),
+		major: $trs.eq(3).find('td').eq(1).text(),
+		class: $trs.eq(3).find('td').eq(3).text(),
+		college: $trs.eq(4).find('td').eq(1).text(),
+		entrance: $trs.eq(5).find('td').eq(3).text(),
+		dormitory: $trs.eq(8).find('td').eq(5).text()
+		}
+	}
+	function parseCourses(html) {
+		html = html.replace(/\r?\n\r?/g, '')
+			.replace(/&nbsp;/g, ' ');
+		var match = html.match(/<TABLE cellSpacing=0 borderColorDark=#eeeeee cellPadding=2 width="99%".+<\/TABLE>/),
+			tableHtml = match && match[0];
+		if (! tableHtml) {
+			throw new Error();
+		}
+		var $table = $(tableHtml),
+			$trs = $table.find('tr');
+
+		var courses = [];
+		var periods = 5,
+			days = $trs.eq(0).find('td').length - 1;
+		for (var i=0, j, $tds; i<periods; i++) {
+			courses[i] = [];
+			$tds = $trs.eq(i + 1).find('td');
+			for (j=0; j<days; j++) {
+				courses[i][j] = $tds.eq(j + 1).html()
+					.replace(/<br>/g, '\n')
+					.replace(/&nbsp;/g, ' ');
+			}
+		}
+		return courses;
+	}
+})();
+</script>
