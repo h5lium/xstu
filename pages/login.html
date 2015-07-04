@@ -176,7 +176,9 @@
 				client.get('/createsession_b.asp', {}, {}, function() {
 					client.get('/rndnum.asp', {}, {}, function() {
 						client.cookie['LogonNumber'] = '';
-						client.post('/logon.asp', data, {}, function(err, res, body){
+						client.post('/logon.asp', data, {
+							'Referer': 'http://jwc.wyu.edu.cn/student/body.htm'
+						}, function(err, res, body){
 							var success = /welcome/.test(body);
 							if (success) {
 								$btn_login.xToggleLoading('资料解析中...');
@@ -189,10 +191,12 @@
 									url: '/f3.asp'
 								}, {
 									name: 'scores',
-									url: '/f4_myscore.asp'
+									url: '/f4_myscore11.asp'
 								}], numLoaded = 0;
 								_.each(toLoad, function(val) {
-									client.get(val.url, {}, {}, function(err, res, body) {
+									client.get(val.url, {}, {
+										'Referer': 'http://jwc.wyu.edu.cn/student/menu.asp'
+									}, function(err, res, body) {
 										try {
 											global[val.name] = parsers[val.name](body);
 											console.log('got '+ val.name);
