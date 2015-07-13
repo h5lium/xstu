@@ -9,6 +9,50 @@
 	</head>
 	<body>
 		<style scoped>
+			html, body, #mainwrap {
+				height: 100%;
+			}
+			html {
+				visibility: hidden;
+			}
+			body {
+				padding: 10px;
+				overflow: hidden;
+			}
+			#mainwrap {
+				visibility: visible;
+				border-radius: 7px;
+				box-shadow: 0 0 14px 0 #333;
+			}
+			#nav-wrapper {
+				margin-bottom: 0;
+			  border-top-left-radius: 7px;
+			  border-top-right-radius: 7px;
+			  overflow: hidden;
+				/* -webkit-app-region: drag; */
+			}
+			#nav {
+				position: relative;
+				margin-bottom: 0;
+				height: 50px;
+			}
+			#framewrap {
+			  height: 630px; /* 680-50 */
+			  background-color: #fafafa;
+				border-bottom-left-radius: 7px;
+  			border-bottom-right-radius: 7px;
+			  overflow: hidden;
+			}
+			#framebox {
+				height: 100%;
+			  overflow: auto;
+			  padding-top: 20px;
+			}
+			/* input, select, textarea,
+			a, button {
+				-webkit-app-region: no-drag;
+			} */
+
 			body {
 				background-color: #fafafa;
 				-webkit-user-select: none;
@@ -36,12 +80,7 @@
 				cursor: pointer;
 			}
 
-			#nav-wrapper {
-				height: 50px;
-				margin-bottom: 20px;
-			}
 			#nav {
-				height: 50px;
 				background: url(img/octicons-bg.png) center repeat;
 				background-color: #222;
 			}
@@ -67,7 +106,7 @@
 			}
 		</style>
 		
-		
+		<div id="mainwrap">
 		<div id="modal-repsw" class="modal" tabindex="-1">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -159,7 +198,13 @@
 			</nav>
 		</div>
 
+		<div id="framewrap">
+		<div id="framebox">
 		<div id="frame" class="container"></div>
+		</div>
+		</div>
+
+		</div>
 
 		<script src="lib/underscore-min.js"></script>
 		<script src="lib/jquery.min.js"></script>
