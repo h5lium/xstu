@@ -24,11 +24,12 @@
 				border-radius: 7px;
 				box-shadow: 0 0 14px 0 #333;
 			}
+			#mainbox {
+				border-radius: 7px;
+				overflow: hidden;
+			}
 			#nav-wrapper {
 				margin-bottom: 0;
-			  border-top-left-radius: 7px;
-			  border-top-right-radius: 7px;
-			  overflow: hidden;
 				/* -webkit-app-region: drag; */
 			}
 			#nav {
@@ -37,21 +38,23 @@
 				height: 50px;
 			}
 			#framewrap {
-			  height: 630px; /* 680-50 */
-			  background-color: #fafafa;
-				border-bottom-left-radius: 7px;
-  			border-bottom-right-radius: 7px;
-			  overflow: hidden;
-			}
-			#framebox {
-				height: 100%;
-			  overflow: auto;
-			  padding-top: 20px;
+				height: 630px; /* 680-50 */
+				overflow: auto;
+				padding-top: 20px;
+				background-color: #fafafa;
 			}
 			/* input, select, textarea,
 			a, button {
 				-webkit-app-region: no-drag;
 			} */
+
+			body.modal-open, .modal-open .navbar-fixed-top, .modal-open .navbar-fixed-bottom {
+				margin-right: 0;
+			}
+			.modal {
+				overflow-y: hidden;
+			}
+
 
 			body {
 				background-color: #fafafa;
@@ -107,6 +110,8 @@
 		</style>
 		
 		<div id="mainwrap">
+		<div id="mainbox">
+
 		<div id="modal-repsw" class="modal" tabindex="-1">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -199,12 +204,11 @@
 		</div>
 
 		<div id="framewrap">
-		<div id="framebox">
 		<div id="frame" class="container"></div>
 		</div>
-		</div>
 
-		</div>
+		</div> <!-- #mainbox -->
+		</div> <!-- #mainwrap -->
 
 		<script src="lib/underscore-min.js"></script>
 		<script src="lib/jquery.min.js"></script>
