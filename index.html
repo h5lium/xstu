@@ -25,6 +25,7 @@
 				box-shadow: 0 0 14px 0 #333;
 			}
 			#mainbox {
+			  position: relative; /* fix modal outline */
 				border-radius: 7px;
 				overflow: hidden;
 			}
@@ -52,6 +53,7 @@
 				margin-right: 0;
 			}
 			.modal {
+				position: absolute; /* fix modal outline */
 				overflow-y: hidden;
 			}
 
@@ -215,6 +217,18 @@
 		<script src="lib/form.js"></script>
 		<script src="lib/bootstrap/js/bootstrap.min.js"></script>
 		<script>
+		// key F12 toggles devtools, for debugging
+		var gui = require('nw.gui')
+		var win = gui.Window.get()
+		//win.showDevTools()
+		$(document).on('keydown', function(e){
+			if (e.keyCode === 123) { // F12
+				if (!win.isDevToolsOpen()) {
+					win.showDevTools()
+				}
+			}
+		})
+
 		$.fn.xToggleLoading = function(loadingTxt) {
 			return $(this).each(function(i, el) {
 				var $btn = $(el);
