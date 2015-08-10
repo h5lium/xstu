@@ -33,6 +33,12 @@
 				margin-bottom: 0;
 				/* -webkit-app-region: drag; */
 			}
+			.navbar-header,
+			.navbar-nav,
+			#form-user {
+				/* -webkit-app-region: no-drag; */
+			}
+
 			#nav {
 				position: relative;
 				margin-bottom: 0;
@@ -109,15 +115,6 @@
 			}
 			#form-user .dropdown-menu .glyphicon {
 				margin-right: 10px;
-			}
-
-			#nav {
-				-webkit-app-region: drag;
-			}
-			.navbar-header,
-			.navbar-nav,
-			#form-user {
-				-webkit-app-region: no-drag;
 			}
 		</style>
 		
@@ -237,6 +234,32 @@
 					win.showDevTools()
 				}
 			}
+		})
+
+		// js自实现窗体拖动
+		// 避免app-region:drag带来的菜单/双击最大化等
+		var $win = $(window)
+		var $nav = $('#nav')
+		var dragging = false
+		var mouse_x, mouse_y
+		var win_x, win_y
+		$nav.on('mousedown', function(e){
+		  e = e.originalEvent || e
+		  var isbg = $(e.target).closest('.navbar-nav, #form-user').length < 1
+		  if (!isbg) return
+		  dragging = true
+		  mouse_x = e.screenX
+		  mouse_y = e.screenY
+		  win_x = win.x
+		  win_y = win.y
+		})
+		$win.on('mousemove', function(e){
+		  if (!dragging) return
+		  win.x = win_x + (e.screenX - mouse_x)
+		  win.y = win_y + (e.screenY - mouse_y)
+		})
+		$win.on('mouseup', function(){
+		  dragging = false
 		})
 
 		$.fn.xToggleLoading = function(loadingTxt) {
